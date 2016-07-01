@@ -3,9 +3,7 @@ package main
 import (
 	"encoding/json"
 	"log"
-	"math/rand"
 	"net/http"
-	"time"
 )
 
 type Book struct {
@@ -16,20 +14,6 @@ type Book struct {
 
 var books = []Book{}
 
-var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
-
-func RandStringRunes(n int) string {
-	b := make([]rune, n)
-	for i := range b {
-		b[i] = letterRunes[rand.Intn(len(letterRunes))]
-	}
-	return string(b)
-}
-
-func init() {
-	rand.Seed(time.Now().UnixNano())
-}
-
 func main() {
 	http.HandleFunc("/books", handler)
 	log.Fatal(http.ListenAndServe(":9012", nil))
@@ -37,12 +21,33 @@ func main() {
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-	newBook := Book{
-		Name:   RandStringRunes(13),
-		IsRent: false,
-		Id:     RandStringRunes(8),
-	}
-	books = append(books, newBook)
+
+	method := r.Method
 	var encoder = json.NewEncoder(w)
-	encoder.Encode(books)
+
+	if method == "GET" {
+		encoder.Encode(books)
+	}
+	if method == "POST" {
+		err := r.ParseForm()
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		log.Println("r.PostForm", r.PostForm)
+		log.Println("r.Form", r.Form)
+		if len(r.Form["name"]) == 1 {
+			newBook := Book{
+				Name:   string(r.Form["name"][0]),
+				IsRent: false,
+				Id:     RandStringRunes(8),
+			}
+			books = append(books, newBook)
+			encoder.Encode(books)
+		}
+		return
+	}
+	if method == "PUT" {
+		encoder.Encode(books)
+	}
 }
