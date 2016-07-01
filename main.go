@@ -29,23 +29,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		encoder.Encode(books)
 	}
 	if method == "POST" {
-		err := r.ParseForm()
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		log.Println("r.PostForm", r.PostForm)
-		log.Println("r.Form", r.Form)
-		if len(r.Form["name"]) == 1 {
-			newBook := Book{
-				Name:   string(r.Form["name"][0]),
-				IsRent: false,
-				Id:     RandStringRunes(8),
-			}
-			books = append(books, newBook)
-			encoder.Encode(books)
-		}
-		return
+		postHandle(encoder, w, r)
 	}
 	if method == "PUT" {
 		encoder.Encode(books)
