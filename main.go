@@ -4,18 +4,19 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strings"
 )
 
-type Book struct {
+type book struct {
 	Name   string
 	IsRent bool
 	Id     string
 }
 
-var books = []Book{}
+var books = []book{}
 
 func main() {
-	http.HandleFunc("/books", handler)
+	http.HandleFunc("/", handler)
 	log.Fatal(http.ListenAndServe(":9012", nil))
 }
 
@@ -24,14 +25,15 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 	method := r.Method
 	var encoder = json.NewEncoder(w)
-
-	if method == "GET" {
-		encoder.Encode(books)
-	}
-	if method == "POST" {
-		postHandle(encoder, w, r)
-	}
-	if method == "PUT" {
-		encoder.Encode(books)
+	if strings.Index(r.URL.Path, "/books") == 0 {
+		if method == "GET" {
+			encoder.Encode(books)
+		}
+		if method == "POST" {
+			postHandle(encoder, w, r)
+		}
+		if method == "PUT" {
+			putHandle(encoder, w, r)
+		}
 	}
 }
