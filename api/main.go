@@ -13,15 +13,18 @@ type book struct {
 	Id     string
 }
 
-var books = []book{}
+var books = []book{
+	book{Name: "The go programming language", IsRent: true, Id: "abcdefgh"},
+}
 
 func main() {
 	http.HandleFunc("/", handler)
-	log.Fatal(http.ListenAndServe(":9012", nil))
+	log.Fatal(http.ListenAndServe(":9013", nil))
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS")
 
 	method := r.Method
 	var encoder = json.NewEncoder(w)
