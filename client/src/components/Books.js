@@ -1,6 +1,7 @@
 import React from 'react'
 import request from 'superagent'
 
+import BookEditor from './BookEditor'
 import { books } from '../config/apiUrl'
 import 'styles/books.scss'
 
@@ -11,6 +12,10 @@ export default class Books extends React.Component {
   }
 
   componentWillMount() {
+    this.updateBooks()
+  }
+
+  updateBooks() {
     request
       .get(books)
       .set('Accept', 'application/json')
@@ -22,17 +27,30 @@ export default class Books extends React.Component {
         }
         try {
           const books = JSON.parse(res.text)
-          console.log(books);
           this.setState({ books })
         } catch (e) {
           return
         }
-      });
+      })
+  }
+
+  rentBook(id, isRent) {
+    request
+      .put(`${books}/${id}`)
+      .set('Accept', 'application/json')
+      .send({ isRent: isRent ? 'false' : 'true' })
+      .type('form')
+      .end((err, res) => {
+        if (err) {
+          console.log(err);
+          return
+        }
+        this.updateBooks()
+      })
   }
 
   render() {
     const { books } = this.state
-    console.log(books);
     return (
       <div className='Books'>
         <div className='book-area header'>
@@ -51,12 +69,14 @@ export default class Books extends React.Component {
               </p>
               <input
                 type='checkbox'
-                value={d.IsRent}
+                defaultChecked={d.IsRent}
                 className='input'
+                onClick={() => this.rentBook(d.Id, d.IsRent)}
               />
             </div>
           ))
         }
+        <BookEditor bookSent={() => this.updateBooks()} />
       </div>
     )
   }

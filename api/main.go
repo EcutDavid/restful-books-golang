@@ -25,6 +25,8 @@ func main() {
 func handler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers",
+		"Origin, X-Requested-With, Content-Type, Accept, Authorization")
 
 	method := r.Method
 	var encoder = json.NewEncoder(w)
