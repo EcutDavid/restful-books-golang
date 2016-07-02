@@ -26,10 +26,10 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	method := r.Method
 	var encoder = json.NewEncoder(w)
 	if strings.Index(r.URL.Path, "/books") == 0 {
-		if method == "GET" {
+		if r.URL.Path == "/books" && method == "GET" {
 			encoder.Encode(books)
 		}
-		if method == "POST" {
+		if r.URL.Path == "/books" && method == "POST" {
 			postHandle(encoder, w, r)
 		}
 		if method == "PUT" {

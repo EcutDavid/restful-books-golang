@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -11,8 +10,6 @@ import (
 func putHandle(encoder *json.Encoder, w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Path
 	pathSplits := strings.Split(path, "/")
-	fmt.Println(len(pathSplits))
-	fmt.Println(pathSplits[1])
 	if len(pathSplits) == 3 && len(pathSplits[2]) == 8 {
 		err := r.ParseForm()
 		if err != nil {
