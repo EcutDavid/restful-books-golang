@@ -1,12 +1,16 @@
 import 'normalize.css/normalize.css'
-import 'styles/App.scss'
+import 'styles/app.scss'
 import React from 'react'
+
+import Header from './Header'
+import Books from './Books'
 
 class AppComponent extends React.Component {
   render() {
     return (
-      <div className="index">
-        <div className="notice">Hello human</div>
+      <div className="Main">
+        <Header />
+        <Books />
       </div>
     )
   }
